@@ -1,41 +1,40 @@
 # wp
 
-wp is a small tool I use to generate color schemes from images, and manage desktop wallpapers.
+I've forked this from https://github.com/everett1992/wp, and included a bunch of extra functionality.
 
 The color extraction scripts were taken from [this blog post](http://charlesleifer.com/blog/using-python-and-k-means-to-find-the-dominant-colors-in-images/)
  with normalization reddit user radiosilence.
 
 ## Dependencies
 
-As far as I know this only relies on PIL, python image library. I was able to fulfill this dependency with the `python-pillow` package on Arch Linux.
-On other systems, `pip install Pillow`.
+* PIL, the python image library. Ususally this can be gotten by `pip install Pillow`
+* python2-requests, if you want to use the dotshare.it functionality
+* dmenu, if you want to use the 'colorselect' functionality
 
 ## Usage
 
 ```
-$ wp add [file]
+$ wp generate [file]
 ```
 
-Generates color files .[file].colors and .[file].Xres which can be sourced by shell
-scripts and xrdb respectivly. The color files and the image are added to the backgrounds directory.
+Generates color files [file].colors and [file].colorsX which can be sourced by shell scripts and xrdb respectivly. The color files are added to the $COLORS_DIR directory, which defaults to ~/dotfiles/colors/.
 
 ```
-$ wp change [file]
+$ wp colorselect
 ```
 
-Changes the background image to a random image from the ~/.wallpapers directory, or the file passed, and  loads the .Xres file
-into xrdb so xterm or urxvt will use the colors. It also links a script to ~/.colors. If you `source ~/.colors` in a script 
-you can use the generated colors with `$COLOR0`, `$COLOR1`, ...
-
+Pipes a list of all the colorschemes in $COLORS_DIR into dmenu, then links the selected one and merges xrdb.
+Dependencies: dmenu
 
 ```
-$ wp rm [file]
+$ wp dotshare [dot-id]
 ```
 
-Removes the image and it's color files from the backgrounds directory.
+Fetches a set of terminal colors from dotshare.it, a social dotfiles sharing site, reformats them, and puts them into $COLORS_DIR. By dot-id, I mean the end of a colorscheme's url, for example http://dotshare.it/dots/87/'s dot-id would be 87. Make sure that the colorscheme is from the set in http://dotshare.it/category/terms/colors/.
+Dependencies: python2-requests
 
 ```
-$ wp ls
+$ wp colors
 ```
 
-Lists the images in the backgrounds folder.
+Displays a pretty-printed color pallete in your terminal!
