@@ -2,24 +2,25 @@ import sys
 import colorsys
 from colorz import colorz
 from math import sqrt
+import argparse
 
 try:
     import Image
 except ImportError:
     from PIL import Image
 
-if len(sys.argv) < 2:
-  print "Usage: {0} FILENAME [num_colors]".format(sys.argv[0])
-  sys.exit()
+p = argparse.ArgumentParser(description="use k-means to generate colors from an image file")
+p.add_argument("filename",help="the image file you want to generate the colors from")
+p.add_argument("-s","--sample",help="generate sample color pallete image",action="store_true")
+p.add_argument("-l","--location",help="set alternate location for the generated color files",default="~/dotfiles/colors")
+p.add_argument("-n","--number",help="set the number of colors to generate",default=16)
+args = p.parse_args()
 
-
-print sys.argv[1]
-
-WALLPAPER = sys.argv[1]
+WALLPAPER = args.filename
 filename = WALLPAPER.split('/').pop()
-COLORS = ".{0}.colors".format(filename)
-XRESOURCES = ".{0}.Xres".format(filename)
-SAMPLE = ".{0}.sample.png".format(filename)
+COLORS = "{dst}/{fn}.colors".format(dst=args.location,fn=filename)
+XRESOURCES = "{dst}/{fn}.colorsX".format(dst=args.location,fn=filename)
+SAMPLE = "{dst}/{fn}.sample.png".format(dst=args.location,fn=filename)
 
 cols = ''
 xres = ''
@@ -77,15 +78,9 @@ def create_sample(f, colors):
     im.save(f)
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        n = 16
-    else:
-        n = int(sys.argv[2])
-
-
     i = 0
     # sort by value, saturation, then hue
-    colors = colorz(WALLPAPER, n=n)
+    colors = colorz(WALLPAPER, n=args.number)
     colors.sort(key=lambda  x:darkness(x), reverse=True)
     for c in colors:
         if i == 0:
@@ -101,7 +96,9 @@ if __name__ == '__main__':
         cols += """export COLOR{}="{}"\n""".format(i, c)
         i += 1
 
-    create_sample(SAMPLE, colors)
+    if args.sample:
+      create_sample(SAMPLE, colors)
+
     with open(XRESOURCES, 'w') as f:
         f.write(xres)
     with open(COLORS, 'w') as f:
