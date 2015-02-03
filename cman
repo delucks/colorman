@@ -30,6 +30,10 @@ function main {
               shift
               change $*
               ;;
+					format)
+							shift
+							format $*
+							;;
 					colorselect)
 							shift
 							colorselect
@@ -63,6 +67,18 @@ function dotshare {
 	dot="$1"
 	echo ":: Downloading and formatting http://dotshare.it/dots/$dot"
 	python2 $DIR/py/dotshare.py $dot
+	exit 0
+}
+
+function format {
+	if [ 1 = $# ]; then
+		indent "Usage: ./cman format {path-to-file} {name-of-colorscheme}"
+		exit 1
+	fi
+
+	dot="$1"
+	echo ":: Formatting $1 to $2"
+	python2 $DIR/py/read.py $dot $2
 	exit 0
 }
 
@@ -182,6 +198,7 @@ Actions
 - dotshare [dot-id]:    Download a dot from dotshare.it, put it in your color folder
 - colorselect:          Select a colorscheme through the use of dmenu
 - colors:               Display the current set of colors.
+- format:               Read in a file in the filesystem into a new colorscheme
 "
 }
 

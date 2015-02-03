@@ -1,6 +1,6 @@
 # X11 Color Manager
 
-This script downloads and manipulates color palletes for X11 based Linux systems. It includes functionality to download color palletes from the site [dotshare.it](http://dotshare.it), and generate color palletes from image files (wallpapers).
+This script downloads and manipulates color palettes for X11 based Linux systems. It includes functionality to download color palettes from the site [dotshare.it](http://dotshare.it), and generate color palettes from image files (wallpapers).
 
 I've forked this from https://github.com/everett1992/wp, and included a bunch of extra functionality.
 
@@ -23,7 +23,7 @@ The current colorscheme will be symlinked to ~/.colors, and ~/.colorsX for sourc
 #include "/home/username/.colorsX"
 ```
 
-This script only works on the color pallete, all other xrdb tweaks (fonts, mouse colors, cursors, transparency) should be made in ~/.Xresources.
+This script only works on the color palette, all other xrdb tweaks (fonts, mouse colors, cursors, transparency) should be made in ~/.Xresources.
 
 ## Usage
 
@@ -50,7 +50,13 @@ Fetches a set of terminal colors from dotshare.it, a social dotfiles sharing sit
 Dependencies: python2-requests
 
 ```
+$ cman format [file] [name]
+```
+
+Format a ~/.Xresources style file, generate a color palette from it, put it into $COLORS_DIR. [name] indicates the name of the generated color scheme.
+
+```
 $ cman colors
 ```
 
-Displays a pretty-printed color pallete in your terminal!
+Displays a pretty-printed color palette in your terminal!
