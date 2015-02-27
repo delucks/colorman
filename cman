@@ -44,8 +44,16 @@ function main {
 							;;
           colors)
               shift
-              colors
+              colors2
               ;;
+					digdug)
+							shift
+							digdug
+							;;
+					morecolors)
+						  shift
+							colors
+							;;
           *)
               shift
               indent "$1 is not a recognised directive"
@@ -188,6 +196,37 @@ function colors {
   echo "     └──────────────────────────────────────────────────────────────────────────┘"
 }
 
+function colors2 {
+	echo
+	for i in {0..7}; do echo -en "\e[0;3${i}m⣿⣿⣿⣿\e[0m"; done; echo
+	for i in {0..7}; do echo -en "\e[0;3${i}m⣿⣿⣿⣿\e[0m"; done; echo
+	for i in {0..7}; do echo -en "\e[1;3${i}m⣿⣿⣿⣿\e[0m"; done; echo
+	echo
+}
+
+function digdug {
+	esc=""
+	blackf="${esc}[30m";   redf="${esc}[31m";    greenf="${esc}[32m"
+	yellowf="${esc}[33m"   bluef="${esc}[34m";   purplef="${esc}[35m"
+	cyanf="${esc}[36m";    whitef="${esc}[37m"
+	blackb="${esc}[40m";   redb="${esc}[41m";    greenb="${esc}[42m"
+	yellowb="${esc}[43m"   blueb="${esc}[44m";   purpleb="${esc}[45m"
+	cyanb="${esc}[46m";    whiteb="${esc}[47m"
+	boldon="${esc}[1m";    boldoff="${esc}[22m"
+	italicson="${esc}[3m"; italicsoff="${esc}[23m"
+	ulon="${esc}[4m";      uloff="${esc}[24m"
+	invon="${esc}[7m";     invoff="${esc}[27m"
+	reset="${esc}[0m"
+	echo "${boldon}${whitef}    ▄▄▄${reset}"
+	echo "${boldon}${whitef} ▄█████▄▄ ${reset}"
+	echo "${boldon}${whitef}███${cyanb}▀▀▀▀${blackb}▀${cyanb}▀${blackb}▀${cyanb}▀${reset}"
+	echo "${boldon}${whitef}███${cyanb}▄   ${boldoff}${blackf}▀ ▀${reset}${cyanf}▀${reset}"
+	echo "${boldon}${whitef} ▄${cyanb}  ${reset}${boldon}${whitef}█████▄ ${boldoff}${redf}█▄${reset}"
+	echo "${boldoff}${redf}▀▀${reset}${boldon}${redb}${whitef}▄${cyanb}▄   ${redb}▄▄▄${reset}${boldoff}${redf}▀██▀${reset}"
+	echo "${boldon}${whitef} ██▀▀▀██▀  ${boldoff}${redf}▀${reset}"
+	echo "${boldon}${whitef} ▀▀▀▀ ▀▀▀▀${reset}"
+}
+
 function usage {
   printf "%b" "  $0 [action] [options]
 
@@ -198,6 +237,7 @@ Actions
 - dotshare [dot-id]:    Download a dot from dotshare.it, put it in your color folder
 - colorselect:          Select a colorscheme through the use of dmenu
 - colors:               Display the current set of colors.
+- morecolors:           Display the current set of colors in a different way.
 - format:               Read in a file in the filesystem into a new colorscheme
 "
 }
