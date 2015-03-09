@@ -197,10 +197,20 @@ function colors {
 }
 
 function colors2 {
+	source ~/.colors
+	VALS=( $COLOR1 $COLOR2 $COLOR3 $COLOR4 $COLOR5 $COLOR6 $COLOR7 $COLOR8 $COLOR9 $COLOR10 $COLOR11 $COLOR12 $COLOR13 $COLOR14 $COLOR15 )
 	echo
-	for i in {0..7}; do echo -en "\e[0;3${i}m⣿⣿⣿⣿\e[0m"; done; echo
-	for i in {0..7}; do echo -en "\e[0;3${i}m⣿⣿⣿⣿\e[0m"; done; echo
-	for i in {0..7}; do echo -en "\e[1;3${i}m⣿⣿⣿⣿\e[0m"; done; echo
+	for i in {0..7};
+	do
+		TRUE=$(echo "$i + 1" | bc)
+		echo -e "\e[0;3${i}mCOLOR$i\t⣿⣿⣿⣿⣿⣿⣿⣿ ${VALS[$i]}\e[0m"
+	done
+	for i in {0..7};
+	do
+		TRUE=$(echo "$i + 8" | bc)
+		INDX=$(echo "$i + 7" | bc)
+		echo -e "\e[1;3${i}mCOLOR$TRUE\t⣿⣿⣿⣿⣿⣿⣿⣿ ${VALS[$INDX]}\e[0m"
+	done
 	echo
 }
 
