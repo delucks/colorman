@@ -10,7 +10,6 @@ The color extraction scripts were taken from [this blog post](http://charlesleif
 ## Dependencies
 
 * PIL, the python image library. Ususally this can be gotten by `pip install Pillow`
-* python2-requests, if you want to use the dotshare.it functionality
 * dmenu, if you want to use the 'colorselect' functionality
 
 ## Setup
@@ -46,8 +45,6 @@ $ cman dotshare [dot-id]
 ```
 
 Fetches a set of terminal colors from dotshare.it, a social dotfiles sharing site, reformats them, and puts them into $COLORS_DIR. By dot-id, I mean the end of a colorscheme's url, for example http://dotshare.it/dots/87/ 's dot-id would be 87. Make sure that the colorscheme is from the set in http://dotshare.it/category/terms/colors/.
-
-Dependencies: python2-requests
 
 ```
 $ cman format [file] [name]

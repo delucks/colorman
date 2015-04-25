@@ -1,5 +1,5 @@
 import argparse
-import requests
+import urllib2
 import getpass
 from color_common import reformat
 
@@ -18,6 +18,6 @@ USER_AGENT = "https://github.com/delucks X colors manager"
 headers = {'User-Agent': USER_AGENT} 
 baseurl="http://dotshare.it/dots/{dotid}/0/raw".format(dotid=args.dot) 
 
-r = requests.get(baseurl,headers=headers)
+r = urllib2.Request(baseurl, None, headers)
 
-reformat(r.text,args.location,args.dot)
+reformat(urllib2.urlopen(r).read(),args.location,args.dot)
