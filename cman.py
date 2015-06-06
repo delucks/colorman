@@ -8,7 +8,27 @@ from py.color_common import *
 # quick hack to make sure the path is formatted right
 COLORS_DIR='/home/{user}/dotfiles/colors'.format(user=getpass.getuser())
 COLORSX='/home/{user}/.colorsX'.format(user=getpass.getuser())
+I3_CONFIG='/home/{user}/.i3/config'.format(user=getpass.getuser())
+I3_CONFIG_TEMPLATE='/home/{user}/.i3/config-template'.format(user=getpass.getuser())
 
+''' 
+writes a configuration template for i3 with a bunch of variables for the colors to the correct file
+'''
+def gen_i3():
+    with open(I3_CONFIG_TEMPLATE, 'r') as f:
+        contents = f.read()
+    with open(COLORSX, 'r') as f:
+        colors = ''
+        color_dict = read_to_dict(f.read())
+        for item in sorted(color_dict.keys()):
+            colors += 'set ${c} {h}\n'.format(c=item, h=color_dict[item])
+    with open(I3_CONFIG, 'w') as f:
+        f.write(colors)
+        f.write(contents)
+
+'''
+pretty-print your current terminal colors
+'''
 def print_colors():
     with open(COLORSX, 'r') as f:
         hexvals = read_to_dict(f.read())
@@ -23,6 +43,9 @@ def print_colors():
             else:
                 print '\x1b[3{i};1mCOLOR{n} ########  {v}\x1b[39;49m'.format(i=lo, n=color_num, v=val)
 
+'''
+reformat a file from dotshare.it
+'''
 def dotgrab(dot_id, location):
     import urllib2
     USER_AGENT = 'https://github.com/delucks X colors manager'
@@ -43,11 +66,14 @@ def main(wall_dir='~/img/wallpapers', colors_dir=COLORS_DIR):
     p.add_argument('-s', '--select', help='open a selection dialog and pick a colorscheme', action='store_true')
     p.add_argument('-d', '--dotshare', help='download and format a color scheme from dotshare.it')
     p.add_argument('-l', '--list-colors', help='pretty-print your current color scheme', action='store_true')
+    p.add_argument('-i', '--generate-i3', help='generate an i3 config file from a template', action='store_true')
     args = p.parse_args()
     if args.dotshare:
         dotgrab(args.dotshare, colors_dir)
     elif args.reformat:
         read_from_file(args.reformat[0], args.reformat[1], colors_dir)
+    elif args.generate_i3:
+        gen_i3()
     else:
         print_colors()
 
