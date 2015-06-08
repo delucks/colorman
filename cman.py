@@ -61,14 +61,18 @@ def read_from_file(file_path, name, location):
 def main(wall_dir='~/img/wallpapers', colors_dir=COLORS_DIR):  
     p = argparse.ArgumentParser(description='manage X11 color palletes')
     p.add_argument('-g', '--generate', help='generate a color scheme from an image')
+    p.add_argument('-l', '--location',help='set alternate location for the generated color files',default='~/dotfiles/colors')
     p.add_argument('-c', '--change', help='swap to a different color scheme')
     p.add_argument('-f', '--reformat', help='reformat an existing file as a color scheme', nargs=2)
     p.add_argument('-s', '--select', help='open a selection dialog and pick a colorscheme', action='store_true')
     p.add_argument('-d', '--dotshare', help='download and format a color scheme from dotshare.it')
-    p.add_argument('-l', '--list-colors', help='pretty-print your current color scheme', action='store_true')
     p.add_argument('-i', '--generate-i3', help='generate an i3 config file from a template', action='store_true')
     args = p.parse_args()
-    if args.dotshare:
+    if args.generate:
+        scheme = ImageScheme(image_path=args.generate)
+        split_name = args.generate.split('/').pop()
+        scheme.generate_xres(args.location, split_name)
+    elif args.dotshare:
         dotgrab(args.dotshare, colors_dir)
     elif args.reformat:
         read_from_file(args.reformat[0], args.reformat[1], colors_dir)
