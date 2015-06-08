@@ -33,7 +33,10 @@ def print_colors():
     with open(COLORSX, 'r') as f:
         hexvals = read_to_dict(f.read())
     for item, val in sorted(hexvals.iteritems()):
-        color_num = int(item.lstrip('color'))
+        potentially_a_color = item.lstrip('color')
+        if not potentially_a_color.isdigit(): # skip 'background', 'foreground' ...
+            continue
+        color_num = int(potentially_a_color)
         if  color_num < 8:
             print '\x1b[3{i}mCOLOR{i}  ########  {v}\x1b[39;49m'.format(i=color_num, v=val)
         else:
@@ -58,24 +61,28 @@ def read_from_file(file_path, name, location):
     with open(file_path) as f:
       reformat(f.read(), location, name)
 
-def main(wall_dir='~/img/wallpapers', colors_dir=COLORS_DIR):  
+def main():  
     p = argparse.ArgumentParser(description='manage X11 color palletes')
     p.add_argument('-g', '--generate', help='generate a color scheme from an image')
-    p.add_argument('-l', '--location',help='set alternate location for the generated color files',default='~/dotfiles/colors')
+    p.add_argument('-l', '--location', help='set alternate location for the generated color files', default=COLORS_DIR)
     p.add_argument('-c', '--change', help='swap to a different color scheme')
     p.add_argument('-f', '--reformat', help='reformat an existing file as a color scheme', nargs=2)
     p.add_argument('-s', '--select', help='open a selection dialog and pick a colorscheme', action='store_true')
     p.add_argument('-d', '--dotshare', help='download and format a color scheme from dotshare.it')
     p.add_argument('-i', '--generate-i3', help='generate an i3 config file from a template', action='store_true')
     args = p.parse_args()
+    if args.location:
+        import os
+        if not os.path.isdir(args.location):
+            os.mkdir(args.location)
     if args.generate:
         scheme = ImageScheme(image_path=args.generate)
         split_name = args.generate.split('/').pop()
         scheme.generate_xres(args.location, split_name)
     elif args.dotshare:
-        dotgrab(args.dotshare, colors_dir)
+        dotgrab(args.dotshare, args.location)
     elif args.reformat:
-        read_from_file(args.reformat[0], args.reformat[1], colors_dir)
+        read_from_file(args.reformat[0], args.reformat[1], args.location)
     elif args.generate_i3:
         gen_i3()
     else:

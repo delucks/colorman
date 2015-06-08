@@ -1,8 +1,8 @@
-# X11 Color Manager
+# colorman X11 Color Manager
 
 This script downloads and manipulates color palettes for X11 based Linux systems. It includes functionality to download color palettes from the site [dotshare.it](http://dotshare.it), and generate color palettes from image files (wallpapers).
 
-I've forked this from https://github.com/everett1992/wp, and included a bunch of extra functionality.
+I've forked this from https://github.com/everett1992/wp, rewrote most of it in python, and included a bunch of extra functionality.
 
 The color extraction scripts were taken from [this blog post](http://charlesleifer.com/blog/using-python-and-k-means-to-find-the-dominant-colors-in-images/)
  with normalization reddit user radiosilence.
@@ -10,11 +10,10 @@ The color extraction scripts were taken from [this blog post](http://charlesleif
 ## Dependencies
 
 * PIL, the python image library. Ususally this can be gotten by `pip install Pillow`
-* dmenu, if you want to use the 'colorselect' functionality
 
 ## Setup
 
-All color files will be downloaded to ~/dotfiles/colors, unless you specify a different $COLORS_DIR by editing `cman`. Make sure this directory exists, or change it in the file.
+All color files will be downloaded to ~/dotfiles/colors, unless you specify a different directory with the '-l' flag. If the directory does not exist, it will be created for you.
 
 The current colorscheme will be symlinked to ~/.colors, and ~/.colorsX for sourcing by bash scripts and xrdb respectively. As such, you should include the following line in your ~/.Xresources file:
 
@@ -27,33 +26,37 @@ This script only works on the color palette, all other xrdb tweaks (fonts, mouse
 ## Usage
 
 ```
-$ cman generate [file]
+cman.py
 ```
 
-Generates color files [file].colors and [file].colorsX which can be sourced by shell scripts and xrdb respectivly. The color files are added to the $COLORS_DIR directory, which defaults to ~/dotfiles/colors/.
+With no arguments, displays a pretty-printed color palette of your current scheme in your terminal!
 
 ```
-$ cman colorselect
+cman.py -g [image file]
 ```
 
-Pipes a list of all the colorschemes in $COLORS_DIR into dmenu, then links the selected one and merges xrdb.
-
-Dependencies: dmenu
+Generates color files [image file].colors and [image file].colorsX which can be sourced by shell scripts and xrdb respectivly. The color files are added to the colorscheme directory, which defaults to ~/dotfiles/colors/. You can specify this with:
 
 ```
-$ cman dotshare [dot-id]
+cman.py -g [image file] -l [alternate location]
 ```
 
-Fetches a set of terminal colors from dotshare.it, a social dotfiles sharing site, reformats them, and puts them into $COLORS_DIR. By dot-id, I mean the end of a colorscheme's url, for example http://dotshare.it/dots/87/ 's dot-id would be 87. Make sure that the colorscheme is from the set in http://dotshare.it/category/terms/colors/.
+This flag works for all subsequent options involving manipulating color schemes.
 
 ```
-$ cman format [file] [name]
+cman.py -d [dot-id]
 ```
 
-Format a ~/.Xresources style file, generate a color palette from it, put it into $COLORS_DIR. [name] indicates the name of the generated color scheme.
+Fetches a set of terminal colors from dotshare.it, a social dotfiles sharing site, reformats them, and puts them into the colorscheme directory. By dot-id, I mean the end of a colorscheme's url, for example http://dotshare.it/dots/87/ 's dot-id would be 87. Make sure that the colorscheme is from the set in http://dotshare.it/category/terms/colors/.
 
 ```
-$ cman colors
+cman.py -f [file] [name]
 ```
 
-Displays a pretty-printed color palette in your terminal!
+Format a ~/.Xresources style file, generate a color palette from it, put it into the colorscheme directory. [name] indicates the name of the generated color scheme.
+
+```
+cman.py -i
+```
+
+Currently experimental functionality to generate templated i3 config file from your current color scheme.
