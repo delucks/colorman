@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 import argparse
+import os
 import getpass
 from py.color_common import *
 
@@ -7,7 +8,8 @@ from py.color_common import *
 
 # quick hack to make sure the path is formatted right
 COLORS_DIR='/home/{user}/dotfiles/colors'.format(user=getpass.getuser())
-COLORSX='/home/{user}/.colorsX'.format(user=getpass.getuser())
+USER_COLORS='/home/{user}/.colors'.format(user=getpass.getuser())
+USER_COLORSX='/home/{user}/.colorsX'.format(user=getpass.getuser())
 I3_CONFIG='/home/{user}/.i3/config'.format(user=getpass.getuser())
 I3_CONFIG_TEMPLATE='/home/{user}/.i3/config-template'.format(user=getpass.getuser())
 
@@ -17,7 +19,7 @@ writes a configuration template for i3 with a bunch of variables for the colors 
 def gen_i3():
     with open(I3_CONFIG_TEMPLATE, 'r') as f:
         contents = f.read()
-    with open(COLORSX, 'r') as f:
+    with open(USER_COLORSX, 'r') as f:
         colors = ''
         color_dict = read_to_dict(f.read())
         for item in sorted(color_dict.keys()):
@@ -30,7 +32,7 @@ def gen_i3():
 pretty-print your current terminal colors
 '''
 def print_colors():
-    with open(COLORSX, 'r') as f:
+    with open(USER_COLORSX, 'r') as f:
         hexvals = read_to_dict(f.read())
     for item, val in sorted(hexvals.iteritems()):
         potentially_a_color = item.lstrip('color')
@@ -61,24 +63,58 @@ def read_from_file(file_path, name, location):
     with open(file_path) as f:
       reformat(f.read(), location, name)
 
+'''
+remove symlink to old colorscheme, add symlink to new colorscheme
+'''
+def swap_schemes(new_name, location=COLORS_DIR):
+    new_colors = os.path.join(location, new_name + '.colors')
+    new_colorsX = os.path.join(location, new_name + '.colorsX')
+    try:
+        os.unlink(USER_COLORS)
+        os.unlink(USER_COLORSX)
+    except OSError:
+        print 'Failed to remove symlinks to ~/.colors and ~/.colorsX!'
+        raise
+    try:
+        os.symlink(new_colors, USER_COLORS)
+        os.symlink(new_colorsX, USER_COLORSX)
+    except OSError:
+        print 'Failed to create symlinks to ~/.colors and ~/.colorsX for colorscheme {}'.format(new_name)
+        raise
+
+'''
+print out a list of all available colorschemes and prompt the user to select one
+'''
+def select_scheme(location=COLORS_DIR):
+    import glob
+    colorschemes = [i.rstrip('.colorsX').split('/')[-1] for i in glob.glob(location + '/*.colorsX')]
+    print 'Available colorschemes:\n'
+    for item in colorschemes:
+        print item
+    choice = raw_input('\nEnter a name: ')
+    if not choice in colorschemes:
+        print '{}: not a valid colorscheme'.format(choice)
+    else:
+        swap_schemes(choice)
+
 def main():  
     p = argparse.ArgumentParser(description='manage X11 color palletes')
     p.add_argument('-g', '--generate', help='generate a color scheme from an image')
     p.add_argument('-l', '--location', help='set alternate location for the generated color files', default=COLORS_DIR)
-    p.add_argument('-c', '--change', help='swap to a different color scheme')
     p.add_argument('-f', '--reformat', help='reformat an existing file as a color scheme', nargs=2)
     p.add_argument('-s', '--select', help='open a selection dialog and pick a colorscheme', action='store_true')
     p.add_argument('-d', '--dotshare', help='download and format a color scheme from dotshare.it')
-    p.add_argument('-i', '--generate-i3', help='generate an i3 config file from a template', action='store_true')
+    p.add_argument('-i', '--generate-i3', help='generate an i3 config file from a template (experimental)', action='store_true')
     args = p.parse_args()
     if args.location:
-        import os
         if not os.path.isdir(args.location):
             os.mkdir(args.location)
     if args.generate:
         scheme = ImageScheme(image_path=args.generate)
         split_name = args.generate.split('/').pop()
         scheme.generate_xres(args.location, split_name)
+    elif args.select:
+        select_scheme(location=args.location)
     elif args.dotshare:
         dotgrab(args.dotshare, args.location)
     elif args.reformat:

@@ -115,11 +115,6 @@ class ImageScheme(object):
         )
         return r, g, b
 
-    def to_hsv(self, c):
-        r, g, b = self.torgb(c)
-        h, s, v = colorsys.rgb_to_hsv(r, g, b)
-        return h, s, v
-
     def darkness(self, hexv):
       r, g, b = self.torgb(hexv)
       darkness = sqrt((255 - r) ** 2 + (255 - g) ** 2 + (255 - b) ** 2)
