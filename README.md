@@ -44,6 +44,12 @@ cman.py -g [image file] -l [alternate location]
 This flag works for all subsequent options involving manipulating color schemes.
 
 ```
+cman.py -s
+```
+
+Prints out all colorschemes found in your colorscheme directory, and prompts you to select one.
+
+```
 cman.py -d [dot-id]
 ```
 

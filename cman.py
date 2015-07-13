@@ -32,15 +32,18 @@ def gen_i3():
 pretty-print your current terminal colors
 '''
 def print_colors():
+    correct_sort = lambda x:int(x[0].lstrip('color'))
     with open(USER_COLORSX, 'r') as f:
         hexvals = read_to_dict(f.read())
-    for item, val in sorted(hexvals.iteritems()):
+    for item, val in sorted(hexvals.iteritems(), key=correct_sort):
         potentially_a_color = item.lstrip('color')
         if not potentially_a_color.isdigit(): # skip 'background', 'foreground' ...
             continue
         color_num = int(potentially_a_color)
         if  color_num < 8:
             print '\x1b[3{i}mCOLOR{i}  ########  {v}\x1b[39;49m'.format(i=color_num, v=val)
+        elif color_num > 14:
+            continue # if you somehow defined more than the term allows
         else:
             lo = color_num - 8
             if lo < 2:
@@ -96,6 +99,7 @@ def select_scheme(location=COLORS_DIR):
         print '{}: not a valid colorscheme'.format(choice)
     else:
         swap_schemes(choice)
+    os.system('xrdb -merge ~/.Xresources')
 
 def main():  
     p = argparse.ArgumentParser(description='manage X11 color palletes')
