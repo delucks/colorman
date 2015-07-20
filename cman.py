@@ -24,6 +24,8 @@ def gen_i3():
         color_dict = read_to_dict(f.read())
         for item in sorted(color_dict.keys()):
             colors += 'set ${c} {h}\n'.format(c=item, h=color_dict[item])
+    colors += 'set $color16 #111111\n'
+    colors += 'set $color17 #e8dfd6\n'
     with open(I3_CONFIG, 'w') as f:
         f.write(colors)
         f.write(contents)
